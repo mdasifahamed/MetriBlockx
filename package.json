@@ -1,0 +1,32 @@
+{
+  "name": "research_on_chain",
+  "version": "1.0.0",
+  "description": "Blockchain data fetcher with ethers.js v6",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "dev:eth": "tsx watch src/index.ts --chain=ethereum",
+    "dev:polygon": "tsx watch src/index.ts --chain=polygon",
+    "dev:bnb": "tsx watch src/index.ts --chain=bnb",
+    "dev:all": "tsx src/index.ts --chain=all",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bullmq": "^5.67.0",
+    "ethers": "^6.13.0",
+    "ioredis": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.9",
+    "dotenv": "^17.2.3",
+    "prisma": "^6.19.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

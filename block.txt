@@ -1,0 +1,8 @@
+eth_start_block = 23914924
+eth_targetblock = 23964383
+
+bnb_startBlock = 70060972
+bnb_targetBlock = 70866989
+
+polygon_startBlock = 79762494
+polygon_target_Block = 80021678

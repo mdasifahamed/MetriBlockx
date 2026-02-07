@@ -1,0 +1,293 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ChainConfig {
+  chainId             Int                  @id @map("chain_id")
+  networkName         String               @map("network_name")
+  tokenSymbol         String               @map("token_symbol")
+  cexFlows            CexFlow[]
+  decodedEvents       DecodedEvent[]
+  nativeTransfers     NativeTransfer[]
+  poolFees            PoolFees[]
+  poolLiquidity       PoolLiquidity[]
+  poolSwaps           PoolSwap[]
+  pools               Pool[]
+  stablecoinCexFlows  StablecoinCexFlow[]
+  stablecoinTransfers StablecoinTransfer[]
+  tokens              Token[]
+  decodedEventRanges  DecodedEventRange[]
+  metricsGenerateds   MetricsGenerated[]
+
+  @@map("chain_config")
+}
+
+model Token {
+  id                  String               @id @default(uuid())
+  chainId             Int                  @map("chain_id")
+  tokenAddress        String               @map("token_address")
+  tokenDecimal        Int                  @map("token_decimal")
+  tokenName           String               @map("token_name")
+  tokenSymbol         String               @map("token_symbol")
+  poolsAsToken0       Pool[]               @relation("Token0")
+  poolsAsToken1       Pool[]               @relation("Token1")
+  stablecoinCexFlows  StablecoinCexFlow[]
+  stablecoinTransfers StablecoinTransfer[]
+  chain               ChainConfig          @relation(fields: [chainId], references: [chainId])
+
+  @@unique([chainId, tokenAddress])
+  @@index([tokenSymbol, chainId])
+  @@map("tokens")
+}
+
+model Pool {
+  id            String          @id @default(uuid())
+  chainId       Int             @map("chain_id")
+  dexName       String          @map("dex_name")
+  dexVersion    String?         @map("dex_version")
+  poolAddress   String          @map("pool_address")
+  poolSymbol    String          @map("pool_symbol")
+  token0Address String          @map("token_0_address")
+  token1Address String          @map("token_1_address")
+  fees          Int
+  poolFees      PoolFees[]
+  liquidity     PoolLiquidity[]
+  swaps         PoolSwap[]
+  chain         ChainConfig     @relation(fields: [chainId], references: [chainId])
+  token0        Token           @relation("Token0", fields: [chainId, token0Address], references: [chainId, tokenAddress])
+  token1        Token           @relation("Token1", fields: [chainId, token1Address], references: [chainId, tokenAddress])
+
+  @@unique([chainId, poolAddress])
+  @@index([chainId, dexName])
+  @@index([chainId, token0Address])
+  @@index([chainId, token1Address])
+  @@map("pools")
+}
+
+model NativeTransfer {
+  id                String      @default(uuid())
+  blockHash         String      @map("block_hash")
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  totalAmount       String      @map("total_amount")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("native_transfers")
+}
+
+model CexFlow {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  cexName           String      @map("cex_name")
+  chainId           Int         @map("chain_id")
+  flowType          FlowType    @map("flow_type")
+  totalAmount       String      @map("total_amount")
+  totalAmountHuman  String      @map("total_amount_human")
+  transactionCount  Int         @map("transaction_count")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, cexName, flowType, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([cexName, flowType])
+  @@index([blockNumber])
+  @@index([chainId, cexName, flowType])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("cex_flows")
+}
+
+model DecodedEvent {
+  id               String      @default(uuid())
+  blockNumber      BigInt      @map("block_number")
+  blockTimeStamp   DateTime    @map("block_time_stamp")
+  chainId          Int         @map("chain_id")
+  contractAddress  String      @map("contract_address")
+  eventArgs        Json        @map("event_args")
+  eventName        String      @map("event_name")
+  transactionHash  String      @map("transaction_hash")
+  transactionIndex Int         @map("transaction_index")
+  chain            ChainConfig @relation(fields: [chainId], references: [chainId])
+
+  @@id([id, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([contractAddress])
+  @@index([eventName])
+  @@index([transactionHash])
+  @@index([chainId, contractAddress, eventName, blockNumber, blockTimeStamp])
+  @@index([chainId, contractAddress, eventName, blockTimeStamp])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("decoded_events")
+}
+
+model StablecoinTransfer {
+  id                String      @default(uuid())
+  blockHash         String      @map("block_hash")
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  tokenAddress      String      @map("token_address")
+  totalAmount       String      @map("total_amount")
+  totalAmountHuman  String      @map("total_amount_human")
+  transactionCount  Int         @map("transaction_count")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  token             Token       @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("stablecoin_transfers")
+}
+
+model StablecoinCexFlow {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  cexName           String      @map("cex_name")
+  chainId           Int         @map("chain_id")
+  flowType          FlowType    @map("flow_type")
+  tokenAddress      String      @map("token_address")
+  totalAmount       String      @map("total_amount")
+  totalAmountHuman  String      @map("total_amount_human")
+  transactionCount  Int         @map("transaction_count")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  token             Token       @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, cexName, flowType, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, cexName, flowType])
+  @@index([chainId, tokenAddress, flowType])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("stablecoin_cex_flows")
+}
+
+model PoolSwap {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  poolAddress       String      @map("pool_address")
+  swapCount         Int         @map("swap_count")
+  transactionHashes String[]    @map("transaction_hashes")
+  volumeToken0      String      @map("volume_token_0")
+  volumeToken0Human String      @map("volume_token_0_human")
+  volumeToken1      String      @map("volume_token_1")
+  volumeToken1Human String      @map("volume_token_1_human")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  pool              Pool        @relation(fields: [chainId, poolAddress], references: [chainId, poolAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, poolAddress, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, poolAddress])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("pool_swaps")
+}
+
+model PoolLiquidity {
+  id                String        @default(uuid())
+  amountToken0      String        @map("amount_token_0")
+  amountToken0Human String        @map("amount_token_0_human")
+  amountToken1      String        @map("amount_token_1")
+  amountToken1Human String        @map("amount_token_1_human")
+  blockNumber       BigInt        @map("block_number")
+  blockTimeStamp    DateTime      @map("block_time_stamp")
+  chainId           Int           @map("chain_id")
+  liquidityType     LiquidityType @map("liquidity_type")
+  poolAddress       String        @map("pool_address")
+  transactionCount  Int           @map("transaction_count")
+  transactionHashes String[]      @map("transaction_hashes")
+  chain             ChainConfig   @relation(fields: [chainId], references: [chainId])
+  pool              Pool          @relation(fields: [chainId, poolAddress], references: [chainId, poolAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, poolAddress, liquidityType, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, poolAddress, liquidityType])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("pool_liquidity")
+}
+
+model PoolFees {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  collectCount      Int         @map("collect_count")
+  feesToken0        String      @map("fees_token_0")
+  feesToken0Human   String      @map("fees_token_0_human")
+  feesToken1        String      @map("fees_token_1")
+  feesToken1Human   String      @map("fees_token_1_human")
+  poolAddress       String      @map("pool_address")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  pool              Pool        @relation(fields: [chainId, poolAddress], references: [chainId, poolAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, poolAddress, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, poolAddress])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("pool_fees")
+}
+
+model DecodedEventRange {
+  id           String      @default(uuid())
+  chainId      Int         @map("chain_id")
+  blockNumbers BigInt[]    @map("block_numbers")
+  createdAt    DateTime    @map("created_at")
+  chain        ChainConfig @relation(fields: [chainId], references: [chainId])
+
+  @@id([id, createdAt])
+  @@index([id, chainId])
+  @@index([chainId])
+  @@index([chainId, createdAt])
+  @@map("decoded_event_range")
+}
+
+model MetricsGenerated {
+  id          String      @default(uuid())
+  chainId     Int         @map("chain_id")
+  blockNumber BigInt      @map("block_number")
+  createdAt   DateTime    @map("created_at")
+  chain       ChainConfig @relation(fields: [chainId], references: [chainId])
+
+  @@id([id, createdAt])
+  @@index([id, chainId])
+  @@index([chainId, createdAt])
+  @@map("metrics_generated")
+}
+
+enum FlowType {
+  INFLOW
+  OUTFLOW
+}
+
+enum LiquidityType {
+  ADD
+  REMOVE
+}
