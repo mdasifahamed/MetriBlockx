@@ -1,6 +1,8 @@
 import os
 import asyncio
 from redis.asyncio import Redis
+from dotenv import load_dotenv
+load_dotenv()
 
 class RedisConnection:
     _lock = asyncio.Lock() 
