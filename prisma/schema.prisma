@@ -24,6 +24,7 @@ model ChainConfig {
   tokens              Token[]
   decodedEventRanges  DecodedEventRange[]
   metricsGenerateds   MetricsGenerated[]
+  poolReserves        PoolReserve[]
 
   @@map("chain_config")
 }
@@ -62,6 +63,7 @@ model Pool {
   chain         ChainConfig     @relation(fields: [chainId], references: [chainId])
   token0        Token           @relation("Token0", fields: [chainId, token0Address], references: [chainId, tokenAddress])
   token1        Token           @relation("Token1", fields: [chainId, token1Address], references: [chainId, tokenAddress])
+  poolReserves  PoolReserve[]
 
   @@unique([chainId, poolAddress])
   @@index([chainId, dexName])
@@ -231,6 +233,27 @@ model PoolLiquidity {
   @@map("pool_liquidity")
 }
 
+model PoolReserve {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  reserveToken0     String      @map("reserve_token_0")
+  reserveToken1     String      @map("reserve_token_1")
+  poolAddress       String      @map("pool_address")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  pool              Pool        @relation(fields: [chainId, poolAddress], references: [chainId, poolAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, poolAddress, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, poolAddress])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("pool_Reserve")
+}
+
 model PoolFees {
   id                String      @default(uuid())
   blockNumber       BigInt      @map("block_number")
@@ -263,6 +286,7 @@ model DecodedEventRange {
   chain        ChainConfig @relation(fields: [chainId], references: [chainId])
 
   @@id([id, createdAt])
+  @@index([createdAt(sort: Desc)])
   @@index([id, chainId])
   @@index([chainId])
   @@index([chainId, createdAt])
@@ -277,6 +301,7 @@ model MetricsGenerated {
   chain       ChainConfig @relation(fields: [chainId], references: [chainId])
 
   @@id([id, createdAt])
+  @@index([createdAt(sort: Desc)])
   @@index([id, chainId])
   @@index([chainId, createdAt])
   @@map("metrics_generated")
