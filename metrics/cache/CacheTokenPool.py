@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class TokenNPoolCache:
@@ -15,7 +15,6 @@ class TokenNPoolCache:
         return cls._instance
     
     def load(self, tokens: List[Dict], pools: List[Dict]):
-       
         for token in tokens:
             chain_id = token['chain_id']
             if chain_id not in self.tokens_by_chain:
@@ -28,34 +27,32 @@ class TokenNPoolCache:
                 self.pools_by_chain[chain_id] = {}
             self.pools_by_chain[chain_id][pool['pool_address']] = pool
                 
-    def getAllTokenByChainId(self, chainId: int):
+    def getAllTokenByChainId(self, chainId: int) -> Optional[Dict]:
         return self.tokens_by_chain.get(chainId)
     
-    def getAllPoolsByChainId(self, chainId: int):
+    def getAllPoolsByChainId(self, chainId: int) -> Optional[Dict]:
         return self.pools_by_chain.get(chainId)
     
-    def getTokenByAddressNChain(self, chainId: int, address: str):
-
+    def getTokenByAddressNChain(self, chainId: int, address: str) -> Optional[Dict]:
         tokens = self.tokens_by_chain.get(chainId)
-        assert tokens is not None, f"Chain {chainId} not found in cache" 
-        token = tokens.get(address)
-        assert token is not None, f"Token {address} not found on chain {chainId}" 
-        return token
+        if tokens is None:
+            return None
+        return tokens.get(address)
     
-    def getPoolByAddressNChain(self, chainId: int, address: str):
-
+    def getPoolByAddressNChain(self, chainId: int, address: str) -> Optional[Dict]:
         pools = self.pools_by_chain.get(chainId)
-        assert pools is not None, f"Chain {chainId} not found in cache"  
-        pool = pools.get(address)
-        assert pool is not None, f"Pool {address} not found on chain {chainId}"  
-        return pool
+        if pools is None:
+            return None
+        return pools.get(address)
     
-    def getTokenDecimalByAddressNChain(self, chainId: int, address: str):
-        """Get token decimal - ASSUMES valid chainId and address"""
+    def getTokenDecimalByAddressNChain(self, chainId: int, address: str) -> Optional[int]:
         token = self.getTokenByAddressNChain(chainId, address)
+        if token is None:
+            return None
         return token['token_decimal']
     
-    def getPoolTypeByAddressNChainId(self, chainId: int, address: str):
-        """Get pool type - ASSUMES valid chainId and address"""
+    def getPoolTypeByAddressNChainId(self, chainId: int, address: str) -> Optional[str]:
         pool = self.getPoolByAddressNChain(chainId, address)
+        if pool is None:
+            return None
         return pool['dex_version']
