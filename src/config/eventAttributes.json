@@ -67,5 +67,18 @@
       "event DestroyedBlackFunds(address indexed _blackListedUser, uint256 _balance)"
     ],
     "tokens": ["USDT"]
+  },
+  "0xab8530f87dc9b59234c4623bf917212bb2536d647574c8e7e5da92c2ede0c9f8": {
+    "abi": [
+      "event Mint(address indexed minter, address indexed account, uint256 amount)"
+    ]
+  },
+  "0xbac40739b0d4ca32fa2d82fc91630465ba3eddd1598da6fca393b26fb63b9453": {
+    "abi": [
+      "event Burn(address indexed burner, address indexed account, uint256 amount)"
+    ]
+  },
+  "0xffa4e6181777692565cf28528fc88fd1516ea86b56da075235fa575af6a4b855": {
+    "abi": ["event Blacklisted(address indexed account)"]
   }
 }
