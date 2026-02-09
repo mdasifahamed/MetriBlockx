@@ -3,6 +3,7 @@ import { EthereumWorker } from "./workers/EthereumWorker";
 import { PolygonWorker } from "./workers/PolygonWorker";
 import { BnbWorker } from "./workers/BnbWorker";
 import { BaseChainWorker } from "./workers/BaseChainWorker";
+import { CexAddressCache } from "./cache/CexAddressCache";
 
 // Store active workers for graceful shutdown
 const activeWorkers: BaseChainWorker[] = [];
@@ -36,7 +37,8 @@ async function main(): Promise<void> {
 
   console.log("Data Fetcher Started");
 
-
+  const cexCache = CexAddressCache.getInstance();
+  await cexCache.load();
 
   console.log(`Starting worker for: ${chain}`);
   if (!targetBlock) {
