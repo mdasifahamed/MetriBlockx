@@ -2,7 +2,7 @@ import { Worker, Job } from "bullmq";
 import { redisConnection, QUEUE_NAMES } from "../config/redis";
 import { BlockJobData } from "./queues";
 import { TransactionData } from "../core/BlockFetcher";
-import { getCEXAddressSetsForChain, getAllCEXAddressesForChain } from "../config/cexAddress";
+import { CexAddressCache } from "../cache/CexAddressCache";
 import { ethers } from "ethers";
 import { NativeTransferStorage } from "../storage/NativeTransferStorage";
 import { CexFlowStorage } from "../storage/CexFlowStorage";
@@ -144,8 +144,9 @@ export class TransactionProcessor {
    */
   private async calculateBlockCEXFlows(data: BlockJobData): Promise<BlockCEXFlowResult> {
     const chainId = data.chainId;
-    const cexAddressSets = getCEXAddressSetsForChain(chainId);
-    const allCEXAddresses = getAllCEXAddressesForChain(chainId);
+    const cexCache = CexAddressCache.getInstance();
+    const cexAddressSets = cexCache.getCexAddressSetsForChain(chainId);
+    const allCEXAddresses = cexCache.getAllCexAddressesForChain(chainId);
 
 
     const nativeTransfers = data.block.transactions.filter(
