@@ -25,6 +25,7 @@ model ChainConfig {
   decodedEventRanges  DecodedEventRange[]
   metricsGenerateds   MetricsGenerated[]
   poolReserves        PoolReserve[]
+  cexAddresses        CexAddress[]
 
   @@map("chain_config")
 }
@@ -305,6 +306,19 @@ model MetricsGenerated {
   @@index([id, chainId])
   @@index([chainId, createdAt])
   @@map("metrics_generated")
+}
+
+model CexAddress {
+  id      String      @id @default(uuid())
+  chainId Int         @map("chain_id")
+  cexName String      @map("cex_name")
+  address String[]
+  chain   ChainConfig @relation(fields: [chainId], references: [chainId])
+
+  @@unique([chainId, cexName])
+  @@index([chainId, cexName])
+  @@index([chainId])
+  @@map("cex_addresses")
 }
 
 enum FlowType {
