@@ -312,10 +312,10 @@ model CexAddress {
   id      String      @id @default(uuid())
   chainId Int         @map("chain_id")
   cexName String      @map("cex_name")
-  address String[]
+  address String
   chain   ChainConfig @relation(fields: [chainId], references: [chainId])
 
-  @@unique([chainId, cexName])
+  @@unique([chainId, address])
   @@index([chainId, cexName])
   @@index([chainId])
   @@map("cex_addresses")
