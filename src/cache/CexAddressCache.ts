@@ -18,18 +18,16 @@ class CexAddressCache {
       if (!this.byChainAndCex.has(row.chainId)) {
         this.byChainAndCex.set(row.chainId, new Map());
       }
-      this.byChainAndCex.get(row.chainId)!.set(
-        row.cexName,
-        new Set(row.address.map(a => a.toLowerCase()))
-      );
+      const cexMap = this.byChainAndCex.get(row.chainId)!;
+      if (!cexMap.has(row.cexName)) {
+        cexMap.set(row.cexName, new Set());
+      }
+      cexMap.get(row.cexName)!.add(row.address.toLowerCase());
 
       if (!this.allByChain.has(row.chainId)) {
         this.allByChain.set(row.chainId, new Set());
       }
-      const allSet = this.allByChain.get(row.chainId)!;
-      for (const addr of row.address) {
-        allSet.add(addr.toLowerCase());
-      }
+      this.allByChain.get(row.chainId)!.add(row.address.toLowerCase());
     }
     console.log(`CexAddressCache Loaded ${rows.length}`);
   }
