@@ -19,6 +19,15 @@ class DBQueries:
         """)
             rows = await cursor.fetchall()
             return rows if rows else []
+            
+    async def getCexAddress(self):
+        async with self.__db.getConnection() as conn:
+            cursor = await conn.execute(
+        """ SELECT * 
+            FROM cex_addresses
+        """)
+            rows = await cursor.fetchall()
+            return rows if rows else []
     async def getEventBlockNumbers(self,chainId: int,createdAt:str):
         async with self.__db.getConnection() as conn:
             cursor = await conn.execute(
