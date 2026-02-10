@@ -5,6 +5,7 @@ from .redisStream.redisClient import redis_client
 from .db.db_connection import db
 from .db.queries import DBQueries
 from .cache.CacheTokenPool import TokenNPoolCache
+from .cache.CexAddresses import CEXAddressCache
 
 
 async def main():
@@ -13,6 +14,7 @@ async def main():
     main_task = asyncio.current_task()
     queries = DBQueries()
     tokenNPoolCache = TokenNPoolCache()._getInstance()
+    cexAddressCache = CEXAddressCache()._getInstance()
 
     for sig in (signal.SIGINT, signal.SIGTERM):
         loop.add_signal_handler(sig, main_task.cancel)
@@ -21,8 +23,10 @@ async def main():
         await db.connect()
         pools = await queries.getPools()
         tokens = await queries.getTokens()
+        cexAddresses = await queries.getCexAddress()
         tokenNPoolCache.load(tokens,pools)
-        await receiveEthStream.receviveMessage()
+        cexAddressCache.load(cexAddresses=cexAddressCache)
+        # await receiveEthStream.receviveMessage()
     except asyncio.CancelledError:
         print("Shutting down...")
     except Exception as e:
