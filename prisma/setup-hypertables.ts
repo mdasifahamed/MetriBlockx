@@ -29,6 +29,9 @@ async function setupHypertables() {
     await prisma.$executeRawUnsafe(`SELECT create_hypertable('stablecoin_events_meta', 'block_time_stamp', chunk_time_interval => INTERVAL '1 day', if_not_exists => TRUE)`);
     console.log("OK: stablecoin_events_meta hypertable");
 
+    await prisma.$executeRawUnsafe(`SELECT create_hypertable('token_supply', 'block_time_stamp', chunk_time_interval => INTERVAL '1 day', if_not_exists => TRUE)`);
+    console.log("OK: token_supply hypertable");
+
     await prisma.$executeRawUnsafe(`SELECT create_hypertable('pool_swaps', 'block_time_stamp', chunk_time_interval => INTERVAL '1 day', if_not_exists => TRUE)`);
     console.log("OK: pool_swaps hypertable");
 
@@ -63,6 +66,9 @@ async function setupHypertables() {
     await prisma.$executeRawUnsafe(`ALTER TABLE stablecoin_events_meta SET (timescaledb.compress, timescaledb.compress_segmentby = 'chain_id,token_address,event_type')`);
     console.log("OK: stablecoin_events_meta compression");
 
+    await prisma.$executeRawUnsafe(`ALTER TABLE token_supply SET (timescaledb.compress, timescaledb.compress_segmentby = 'chain_id,token_address,token_supply_type')`);
+    console.log("OK: token_spply compression");
+
     await prisma.$executeRawUnsafe(`ALTER TABLE pool_swaps SET (timescaledb.compress, timescaledb.compress_segmentby = 'chain_id,pool_address')`);
     console.log("OK: pool_swaps compression");
 
@@ -85,6 +91,7 @@ async function setupHypertables() {
     await prisma.$executeRawUnsafe(`SELECT add_compression_policy('stablecoin_transfers', INTERVAL '1 days', if_not_exists => TRUE)`);
     await prisma.$executeRawUnsafe(`SELECT add_compression_policy('stablecoin_cex_flows', INTERVAL '1 days', if_not_exists => TRUE)`);
     await prisma.$executeRawUnsafe(`SELECT add_compression_policy('stablecoin_events_meta', INTERVAL '1 days', if_not_exists => TRUE)`);
+    await prisma.$executeRawUnsafe(`SELECT add_compression_policy('token_supply', INTERVAL '1 days', if_not_exists => TRUE)`);
     await prisma.$executeRawUnsafe(`SELECT add_compression_policy('pool_swaps', INTERVAL '1 days', if_not_exists => TRUE)`);
     await prisma.$executeRawUnsafe(`SELECT add_compression_policy('pool_liquidity', INTERVAL '1 days', if_not_exists => TRUE)`);
     await prisma.$executeRawUnsafe(`SELECT add_compression_policy('pool_fees', INTERVAL '1 days', if_not_exists => TRUE)`);
