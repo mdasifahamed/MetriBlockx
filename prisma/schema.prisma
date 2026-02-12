@@ -27,6 +27,7 @@ model ChainConfig {
   metricsGenerateds   MetricsGenerated[]
   poolReserves        PoolReserve[]
   cexAddresses        CexAddress[]
+  tokenSupplies       TokenSupply[]
 
   @@map("chain_config")
 }
@@ -44,6 +45,7 @@ model Token {
   stablecoinEvents    StablecoinEventMeta[]
   stablecoinTransfers StablecoinTransfer[]
   chain               ChainConfig           @relation(fields: [chainId], references: [chainId])
+  tokenSupplies       TokenSupply[]
 
   @@unique([chainId, tokenAddress])
   @@index([tokenSymbol, chainId])
@@ -344,6 +346,27 @@ model StablecoinEventMeta {
   @@map("stablecoin_events_meta")
 }
 
+model TokenSupply {
+  id              String      @default(uuid())
+  blockNumber     BigInt      @map("block_number")
+  blockTimeStamp  DateTime    @map("block_time_stamp")
+  chainId         Int         @map("chain_id")
+  tokenAddress    String      @map("token_address")
+  tokenSupplyType String      @map("token_supply_type")
+  amount          String      @map("amount")
+  transactionHash String      @map("transaction_hash")
+  chain           ChainConfig @relation(fields: [chainId], references: [chainId])
+  token           Token       @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, tokenSupplyType, transactionHash, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress, tokenSupplyType])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("token_supply")
+}
+
 enum FlowType {
   INFLOW
   OUTFLOW
@@ -352,4 +375,9 @@ enum FlowType {
 enum LiquidityType {
   ADD
   REMOVE
+}
+
+enum TokenSupplyType {
+  ISSUE
+  BURN
 }

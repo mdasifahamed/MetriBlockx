@@ -4,55 +4,55 @@
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 -- Convert native_transfers to hypertable (partition by blockTimeStamp)
-SELECT create_hypertable('native_transfers', 'blockTimeStamp',
+SELECT create_hypertable('native_transfers', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert cex_flows to hypertable
-SELECT create_hypertable('cex_flows', 'blockTimeStamp',
+SELECT create_hypertable('cex_flows', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert decoded_events to hypertable
-SELECT create_hypertable('decoded_events', 'blockTimeStamp',
+SELECT create_hypertable('decoded_events', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert stablecoin_transfers to hypertable
-SELECT create_hypertable('stablecoin_transfers', 'blockTimeStamp',
+SELECT create_hypertable('stablecoin_transfers', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert stablecoin_cex_flows to hypertable
-SELECT create_hypertable('stablecoin_cex_flows', 'blockTimeStamp',
+SELECT create_hypertable('stablecoin_cex_flows', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert stablecoin_events_meta to hypertable
-SELECT create_hypertable('stablecoin_events_meta', 'blockTimeStamp',
+SELECT create_hypertable('stablecoin_events_meta', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert pool_swaps to hypertable
-SELECT create_hypertable('pool_swaps', 'blockTimeStamp',
+SELECT create_hypertable('pool_swaps', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert pool_liquidity to hypertable
-SELECT create_hypertable('pool_liquidity', 'blockTimeStamp',
+SELECT create_hypertable('pool_liquidity', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
 
 -- Convert pool_fees to hypertable
-SELECT create_hypertable('pool_fees', 'blockTimeStamp',
+SELECT create_hypertable('pool_fees', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
@@ -72,47 +72,52 @@ SELECT create_hypertable('metrics_generated', 'created_at',
 -- Enable compression for older data
 ALTER TABLE native_transfers SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId'
+  timescaledb.compress_segmentby = 'chain_id'
 );
 
 ALTER TABLE cex_flows SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,cexName'
+  timescaledb.compress_segmentby = 'chain_id,cex_name'
 );
 
 ALTER TABLE decoded_events SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,eventName'
+  timescaledb.compress_segmentby = 'chain_id,event_name'
 );
 
 ALTER TABLE stablecoin_transfers SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,tokenAddress'
+  timescaledb.compress_segmentby = 'chain_id,token_address'
 );
 
 ALTER TABLE stablecoin_cex_flows SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,tokenAddress,cexName'
+  timescaledb.compress_segmentby = 'chain_id,token_address,cex_name'
 );
 
 ALTER TABLE stablecoin_events_meta SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,tokenAddress,eventType'
+  timescaledb.compress_segmentby = 'chain_id,token_address,event_type'
+);
+
+ALTER TABLE token_supply SET (
+  timescaledb.compress,
+  timescaledb.compress_segmentby = 'chain_id,token_address,token_supply_type'
 );
 
 ALTER TABLE pool_swaps SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,poolAddress'
+  timescaledb.compress_segmentby = 'chain_id,pool_address'
 );
 
 ALTER TABLE pool_liquidity SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,poolAddress,liquidityType'
+  timescaledb.compress_segmentby = 'chain_id,pool_address,liquidity_type'
 );
 
 ALTER TABLE pool_fees SET (
   timescaledb.compress,
-  timescaledb.compress_segmentby = 'chainId,poolAddress'
+  timescaledb.compress_segmentby = 'chain_id,pool_address'
 );
 ALTER TABLE deceoded_event_range SET (
   timescaledb.compress,
@@ -126,6 +131,7 @@ SELECT add_compression_policy('decoded_events', INTERVAL '1 days', if_not_exists
 SELECT add_compression_policy('stablecoin_transfers', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('stablecoin_cex_flows', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('stablecoin_events_meta', INTERVAL '1 days', if_not_exists => TRUE);
+SELECT add_compression_policy('token_supply', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('pool_swaps', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('pool_liquidity', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('pool_fees', INTERVAL '1 days', if_not_exists => TRUE);
