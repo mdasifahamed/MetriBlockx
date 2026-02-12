@@ -9,9 +9,9 @@ datasource db {
 }
 
 model ChainConfig {
-  chainId             Int                  @id @map("chain_id")
-  networkName         String               @map("network_name")
-  tokenSymbol         String               @map("token_symbol")
+  chainId             Int                   @id @map("chain_id")
+  networkName         String                @map("network_name")
+  tokenSymbol         String                @map("token_symbol")
   cexFlows            CexFlow[]
   decodedEvents       DecodedEvent[]
   nativeTransfers     NativeTransfer[]
@@ -20,6 +20,7 @@ model ChainConfig {
   poolSwaps           PoolSwap[]
   pools               Pool[]
   stablecoinCexFlows  StablecoinCexFlow[]
+  stablecoinEvents    StablecoinEventMeta[]
   stablecoinTransfers StablecoinTransfer[]
   tokens              Token[]
   decodedEventRanges  DecodedEventRange[]
@@ -31,17 +32,18 @@ model ChainConfig {
 }
 
 model Token {
-  id                  String               @id @default(uuid())
-  chainId             Int                  @map("chain_id")
-  tokenAddress        String               @map("token_address")
-  tokenDecimal        Int                  @map("token_decimal")
-  tokenName           String               @map("token_name")
-  tokenSymbol         String               @map("token_symbol")
-  poolsAsToken0       Pool[]               @relation("Token0")
-  poolsAsToken1       Pool[]               @relation("Token1")
+  id                  String                @id @default(uuid())
+  chainId             Int                   @map("chain_id")
+  tokenAddress        String                @map("token_address")
+  tokenDecimal        Int                   @map("token_decimal")
+  tokenName           String                @map("token_name")
+  tokenSymbol         String                @map("token_symbol")
+  poolsAsToken0       Pool[]                @relation("Token0")
+  poolsAsToken1       Pool[]                @relation("Token1")
   stablecoinCexFlows  StablecoinCexFlow[]
+  stablecoinEvents    StablecoinEventMeta[]
   stablecoinTransfers StablecoinTransfer[]
-  chain               ChainConfig          @relation(fields: [chainId], references: [chainId])
+  chain               ChainConfig           @relation(fields: [chainId], references: [chainId])
 
   @@unique([chainId, tokenAddress])
   @@index([tokenSymbol, chainId])
@@ -319,6 +321,27 @@ model CexAddress {
   @@index([chainId, cexName])
   @@index([chainId])
   @@map("cex_addresses")
+}
+
+model StablecoinEventMeta {
+  id              String      @default(uuid())
+  blockNumber     BigInt      @map("block_number")
+  blockTimeStamp  DateTime    @map("block_time_stamp")
+  chainId         Int         @map("chain_id")
+  tokenAddress    String      @map("token_address")
+  eventType       String      @map("event_type")
+  eventData       Json        @map("event_data")
+  transactionHash String      @map("transaction_hash")
+  chain           ChainConfig @relation(fields: [chainId], references: [chainId])
+  token           Token       @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, eventType, transactionHash, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress, eventType])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("stablecoin_events_meta")
 }
 
 enum FlowType {
