@@ -38,3 +38,14 @@ class DBQueries:
             )
             row = await cursor.fetchone()
             return row['block_numbers'] if row else []
+    async def getTransferEvents(self, tokenAddress:str, chianId,evenType:str,blockNumber: int):
+            async with self.__db.getConnection() as conn:
+                cursor = await conn.execute(
+                    """ SELECT * 
+                        FROM decoded_events
+                        WHERE chain_id = %s AND contract_address = %s AND event_name = %s AND block_number = %s 
+                    """,
+                    (chianId,tokenAddress,evenType,blockNumber)
+                )
+                rows = await cursor.fetchall()
+                return rows if rows else []
