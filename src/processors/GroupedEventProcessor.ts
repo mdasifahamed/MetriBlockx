@@ -168,11 +168,12 @@ export class GroupedEventProcessor {
           createdAt: createdAt
         }
       )
-      const notificationData: BlockRangeNotification = {
-        chainId: chainId,
-        createdAt: createdAt
-      }
-      await this.sendEventBlockRangeNotification.sendEventBlockRange(notificationData)
+      // Commented out only for the test run and validation of the metrics 
+      // const notificationData: BlockRangeNotification = {
+      //   chainId: chainId,
+      //   createdAt: createdAt
+      // }
+      // await this.sendEventBlockRangeNotification.sendEventBlockRange(notificationData)
     }
   }
 
