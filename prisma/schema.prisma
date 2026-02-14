@@ -39,6 +39,7 @@ model Token {
   tokenDecimal        Int                   @map("token_decimal")
   tokenName           String                @map("token_name")
   tokenSymbol         String                @map("token_symbol")
+  tokenType           TokenType             @default(ERC20) @map("token_type")
   poolsAsToken0       Pool[]                @relation("Token0")
   poolsAsToken1       Pool[]                @relation("Token1")
   stablecoinCexFlows  StablecoinCexFlow[]
@@ -380,4 +381,11 @@ enum LiquidityType {
 enum TokenSupplyType {
   ISSUE
   BURN
+}
+
+enum TokenType {
+  STABLE
+  WRAPPED
+  RWA
+  ERC20
 }
