@@ -19,13 +19,15 @@ class TokenNPoolCache:
             chain_id = token['chain_id']
             if chain_id not in self.tokens_by_chain:
                 self.tokens_by_chain[chain_id] = {}
-            self.tokens_by_chain[chain_id][token['token_address']] = token
+            token_address_lower = token['token_address'].lower()
+            self.tokens_by_chain[chain_id][token_address_lower] = token
         
         for pool in pools:
             chain_id = pool['chain_id']
             if chain_id not in self.pools_by_chain:
                 self.pools_by_chain[chain_id] = {}
-            self.pools_by_chain[chain_id][pool['pool_address']] = pool
+            pool_address_lower = pool['pool_address'].lower()
+            self.pools_by_chain[chain_id][pool_address_lower] = pool
                 
     def getAllTokenByChainId(self, chainId: int) -> Optional[Dict]:
         return self.tokens_by_chain.get(chainId)
@@ -37,13 +39,13 @@ class TokenNPoolCache:
         tokens = self.tokens_by_chain.get(chainId)
         if tokens is None:
             return None
-        return tokens.get(address)
+        return tokens.get(address.lower())
     
     def getPoolByAddressNChain(self, chainId: int, address: str) -> Optional[Dict]:
         pools = self.pools_by_chain.get(chainId)
         if pools is None:
             return None
-        return pools.get(address)
+        return pools.get(address.lower())
     
     def getTokenDecimalByAddressNChain(self, chainId: int, address: str) -> Optional[int]:
         token = self.getTokenByAddressNChain(chainId, address)
