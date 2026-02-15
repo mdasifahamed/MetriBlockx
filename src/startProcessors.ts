@@ -1,25 +1,33 @@
 import { TransactionProcessor } from "./processors/TransactionProcessor";
 import { EventProcessor } from "./processors/EventProcessor";
 import { GroupedEventProcessor } from "./processors/GroupedEventProcessor";
+import { CexAddressCache } from "./cache/CexAddressCache";
 
-const txProcessor = new TransactionProcessor();
-const eventProcessor = new EventProcessor();
-const groupedEventProcessor = new GroupedEventProcessor();
+async function main() {
+  const cexCache = CexAddressCache.getInstance();
+  await cexCache.load();
 
-console.log("Processors started. Waiting for jobs...\n");
+  const txProcessor = new TransactionProcessor();
+  const eventProcessor = new EventProcessor();
+  const groupedEventProcessor = new GroupedEventProcessor();
 
-process.on("SIGINT", async () => {
-  console.log("\nShutting down processors...");
-  await txProcessor.close();
-  await eventProcessor.close();
-  await groupedEventProcessor.close();
-  console.log("Processors stopped. Goodbye!");
-  process.exit(0);
-});
+  console.log("Processors started. Waiting for jobs...\n");
 
-process.on("SIGTERM", async () => {
-  await txProcessor.close();
-  await eventProcessor.close();
-  await groupedEventProcessor.close();
-  process.exit(0);
-});
+  process.on("SIGINT", async () => {
+    console.log("\nShutting down processors...");
+    await txProcessor.close();
+    await eventProcessor.close();
+    await groupedEventProcessor.close();
+    console.log("Processors stopped. Goodbye!");
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", async () => {
+    await txProcessor.close();
+    await eventProcessor.close();
+    await groupedEventProcessor.close();
+    process.exit(0);
+  });
+}
+
+main().catch(console.error);
