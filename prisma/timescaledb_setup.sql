@@ -1,5 +1,3 @@
-
-
 -- Enable TimescaleDB extension 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -65,6 +63,30 @@ SELECT create_hypertable('deceoded_event_range', 'created_at',
 
 -- Convert metrics_generated to hypertable
 SELECT create_hypertable('metrics_generated', 'created_at',
+  chunk_time_interval => INTERVAL '1 day',
+  if_not_exists => TRUE
+);
+
+-- Convert token_transfers to hypertable
+SELECT create_hypertable('token_transfers', 'block_time_stamp',
+  chunk_time_interval => INTERVAL '1 day',
+  if_not_exists => TRUE
+);
+
+-- Convert token_cex_flows to hypertable
+SELECT create_hypertable('token_cex_flows', 'block_time_stamp',
+  chunk_time_interval => INTERVAL '1 day',
+  if_not_exists => TRUE
+);
+
+-- Convert token_supply_events to hypertable
+SELECT create_hypertable('token_supply_events', 'block_time_stamp',
+  chunk_time_interval => INTERVAL '1 day',
+  if_not_exists => TRUE
+);
+
+-- Convert token_deposit_withdrawals to hypertable
+SELECT create_hypertable('token_deposit_withdrawals', 'block_time_stamp',
   chunk_time_interval => INTERVAL '1 day',
   if_not_exists => TRUE
 );
@@ -135,4 +157,9 @@ SELECT add_compression_policy('token_supply', INTERVAL '1 days', if_not_exists =
 SELECT add_compression_policy('pool_swaps', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('pool_liquidity', INTERVAL '1 days', if_not_exists => TRUE);
 SELECT add_compression_policy('pool_fees', INTERVAL '1 days', if_not_exists => TRUE);
+
+SELECT add_compression_policy('token_transfers', INTERVAL '1 days', if_not_exists => TRUE);
+SELECT add_compression_policy('token_cex_flows', INTERVAL '1 days', if_not_exists => TRUE);
+SELECT add_compression_policy('token_supply_events', INTERVAL '1 days', if_not_exists => TRUE);
+SELECT add_compression_policy('token_deposit_withdrawals', INTERVAL '1 days', if_not_exists => TRUE);
 
