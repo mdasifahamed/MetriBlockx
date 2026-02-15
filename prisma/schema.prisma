@@ -9,44 +9,52 @@ datasource db {
 }
 
 model ChainConfig {
-  chainId             Int                   @id @map("chain_id")
-  networkName         String                @map("network_name")
-  tokenSymbol         String                @map("token_symbol")
-  cexFlows            CexFlow[]
-  decodedEvents       DecodedEvent[]
-  nativeTransfers     NativeTransfer[]
-  poolFees            PoolFees[]
-  poolLiquidity       PoolLiquidity[]
-  poolSwaps           PoolSwap[]
-  pools               Pool[]
-  stablecoinCexFlows  StablecoinCexFlow[]
-  stablecoinEvents    StablecoinEventMeta[]
-  stablecoinTransfers StablecoinTransfer[]
-  tokens              Token[]
-  decodedEventRanges  DecodedEventRange[]
-  metricsGenerateds   MetricsGenerated[]
-  poolReserves        PoolReserve[]
-  cexAddresses        CexAddress[]
-  tokenSupplies       TokenSupply[]
+  chainId                 Int                      @id @map("chain_id")
+  networkName             String                   @map("network_name")
+  tokenSymbol             String                   @map("token_symbol")
+  cexFlows                CexFlow[]
+  decodedEvents           DecodedEvent[]
+  nativeTransfers         NativeTransfer[]
+  poolFees                PoolFees[]
+  poolLiquidity           PoolLiquidity[]
+  poolSwaps               PoolSwap[]
+  pools                   Pool[]
+  stablecoinCexFlows      StablecoinCexFlow[]
+  stablecoinEvents        StablecoinEventMeta[]
+  stablecoinTransfers     StablecoinTransfer[]
+  tokens                  Token[]
+  decodedEventRanges      DecodedEventRange[]
+  metricsGenerateds       MetricsGenerated[]
+  poolReserves            PoolReserve[]
+  cexAddresses            CexAddress[]
+  tokenSupplies           TokenSupply[]
+  tokenTransfers          TokenTransfer[]
+  tokenCexFlows           TokenCexFlow[]
+  tokenSupplyEvents       TokenSupplyEvent[]
+  tokenDepositWithdrawals TokenDepositWithdrawal[]
 
   @@map("chain_config")
 }
 
 model Token {
-  id                  String                @id @default(uuid())
-  chainId             Int                   @map("chain_id")
-  tokenAddress        String                @map("token_address")
-  tokenDecimal        Int                   @map("token_decimal")
-  tokenName           String                @map("token_name")
-  tokenSymbol         String                @map("token_symbol")
-  tokenType           TokenType             @default(ERC20) @map("token_type")
-  poolsAsToken0       Pool[]                @relation("Token0")
-  poolsAsToken1       Pool[]                @relation("Token1")
-  stablecoinCexFlows  StablecoinCexFlow[]
-  stablecoinEvents    StablecoinEventMeta[]
-  stablecoinTransfers StablecoinTransfer[]
-  chain               ChainConfig           @relation(fields: [chainId], references: [chainId])
-  tokenSupplies       TokenSupply[]
+  id                      String                   @id @default(uuid())
+  chainId                 Int                      @map("chain_id")
+  tokenAddress            String                   @map("token_address")
+  tokenDecimal            Int                      @map("token_decimal")
+  tokenName               String                   @map("token_name")
+  tokenSymbol             String                   @map("token_symbol")
+  tokenType               TokenType                @default(ERC20) @map("token_type")
+  poolsAsToken0           Pool[]                   @relation("Token0")
+  poolsAsToken1           Pool[]                   @relation("Token1")
+  stablecoinCexFlows      StablecoinCexFlow[]
+  stablecoinEvents        StablecoinEventMeta[]
+  stablecoinTransfers     StablecoinTransfer[]
+  chain                   ChainConfig              @relation(fields: [chainId], references: [chainId])
+  tokenSupplies           TokenSupply[]
+  tokenTransfers          TokenTransfer[]
+  tokenCexFlows           TokenCexFlow[]
+  tokenSupplyEvents       TokenSupplyEvent[]
+  tokenDepositWithdrawals TokenDepositWithdrawal[]
 
   @@unique([chainId, tokenAddress])
   @@index([tokenSymbol, chainId])
@@ -368,6 +376,100 @@ model TokenSupply {
   @@map("token_supply")
 }
 
+model TokenTransfer {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  tokenAddress      String      @map("token_address")
+  totalAmount       String      @map("total_amount")
+  totalAmountHuman  String      @map("total_amount_human")
+  transactionCount  Int         @map("transaction_count")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  token             Token       @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("token_transfers")
+}
+
+model TokenCexFlow {
+  id                String      @default(uuid())
+  blockNumber       BigInt      @map("block_number")
+  blockTimeStamp    DateTime    @map("block_time_stamp")
+  chainId           Int         @map("chain_id")
+  tokenAddress      String      @map("token_address")
+  cexName           String      @map("cex_name")
+  flowType          FlowType    @map("flow_type")
+  totalAmount       String      @map("total_amount")
+  totalAmountHuman  String      @map("total_amount_human")
+  transactionCount  Int         @map("transaction_count")
+  transactionHashes String[]    @map("transaction_hashes")
+  chain             ChainConfig @relation(fields: [chainId], references: [chainId])
+  token             Token       @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, cexName, flowType, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress, flowType])
+  @@index([chainId, cexName, flowType])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("token_cex_flows")
+}
+
+model TokenSupplyEvent {
+  id                String          @default(uuid())
+  blockNumber       BigInt          @map("block_number")
+  blockTimeStamp    DateTime        @map("block_time_stamp")
+  chainId           Int             @map("chain_id")
+  tokenAddress      String          @map("token_address")
+  supplyType        TokenSupplyType @map("supply_type")
+  totalAmount       String          @map("total_amount")
+  totalAmountHuman  String          @map("total_amount_human")
+  transactionCount  Int             @map("transaction_count")
+  transactionHashes String[]        @map("transaction_hashes")
+  chain             ChainConfig     @relation(fields: [chainId], references: [chainId])
+  token             Token           @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, supplyType, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress, supplyType])
+  @@index([blockNumber])
+  @@index([supplyType])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("token_supply_events")
+}
+
+model TokenDepositWithdrawal {
+  id                String        @default(uuid())
+  blockNumber       BigInt        @map("block_number")
+  blockTimeStamp    DateTime      @map("block_time_stamp")
+  chainId           Int           @map("chain_id")
+  tokenAddress      String        @map("token_address")
+  operationType     OperationType @map("operation_type")
+  totalAmount       String        @map("total_amount")
+  totalAmountHuman  String        @map("total_amount_human")
+  transactionCount  Int           @map("transaction_count")
+  transactionHashes String[]      @map("transaction_hashes")
+  chain             ChainConfig   @relation(fields: [chainId], references: [chainId])
+  token             Token         @relation(fields: [chainId, tokenAddress], references: [chainId, tokenAddress])
+
+  @@id([id, blockTimeStamp])
+  @@unique([chainId, tokenAddress, operationType, blockNumber, blockTimeStamp])
+  @@index([chainId, blockTimeStamp])
+  @@index([chainId, tokenAddress, operationType])
+  @@index([blockNumber])
+  @@index([blockTimeStamp(sort: Desc)])
+  @@map("token_deposit_withdrawals")
+}
+
 enum FlowType {
   INFLOW
   OUTFLOW
@@ -388,4 +490,9 @@ enum TokenType {
   WRAPPED
   RWA
   ERC20
+}
+
+enum OperationType {
+  DEPOSIT
+  WITHDRAWAL
 }
