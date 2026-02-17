@@ -32,11 +32,16 @@ async def main():
 
         print("Starting stream receivers for all chains...")
 
-        await asyncio.gather(
+        results = await asyncio.gather(
             ethereum_stream_receiver.receiveMessages(),
             bnb_stream_receiver.receiveMessages(),
-            polygon_stream_receiver.receiveMessages()
+            polygon_stream_receiver.receiveMessages(),
+            return_exceptions=True
         )
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                chain = ['Ethereum', 'BNB', 'Polygon'][i]
+                print(f"{chain} stream receiver failed: {result}")
     except asyncio.CancelledError:
         print("Shutting down...")
     except Exception as error:
