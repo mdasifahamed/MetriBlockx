@@ -17,12 +17,12 @@ export const CHAINS: Record<string, ChainConfig> = {
     name: "Ethereum",
     symbol: "ETH",
     rpcEndpoints: [
-      process.env.ETH_RPC_1 || "https://eth.drpc.org",
-      process.env.ETH_RPC_2 || "https://rpc.ankr.com/eth",
-      process.env.ETH_RPC_3 || "https://ethereum.publicnode.com",
+      process.env.ETH_RPC_1 || "",
+      process.env.ETH_RPC_2 || "",
+      process.env.ETH_RPC_3 || "",
     ],
-    blockTime: 500, // kept it generaic for the historical data.can be tuned according to the network for the blokc creation time
-    blockThresholdForTheEvents: 500, // kept it generic for the so that it can adjust amon the rpc providers
+    blockTime: 25, // kept it generaic for the historical data.can be tuned according to the network for the blokc creation time
+    blockThresholdForTheEvents: 5, // kept it generic for the so that it can adjust amon the rpc providers
     targetAddresses: [
       "0xdac17f958d2ee523a2206206994597c13d831ec7", //usdt
       "0xb8c77482e45f1f44de1745f52c74426c631bdd52", //wbnb
@@ -46,12 +46,12 @@ export const CHAINS: Record<string, ChainConfig> = {
     name: "Polygon",
     symbol: "MATIC",
     rpcEndpoints: [
-      process.env.POLYGON_RPC_1 || "https://polygon.drpc.org",
-      process.env.POLYGON_RPC_2 || "https://rpc.ankr.com/polygon",
-      process.env.POLYGON_RPC_3 || "https://polygon-bor-rpc.publicnode.com",
+      process.env.POLYGON_RPC_1 || "",
+      process.env.POLYGON_RPC_2 || "",
+      process.env.POLYGON_RPC_3 || "",
     ],
-    blockTime: 500, // kept it generaic for the historical data.can be tuned according to the network for the blokc creation time
-    blockThresholdForTheEvents: 500, // kept it generic for the so that it can adjust amon the rpc providers
+    blockTime: 250, // kept it generaic for the historical data.can be tuned according to the network for the blokc creation time
+    blockThresholdForTheEvents: 5, // kept it generic for the so that it can adjust amon the rpc providers
     targetAddresses: [
       '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359', //usdc
       '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', // weth
@@ -72,12 +72,12 @@ export const CHAINS: Record<string, ChainConfig> = {
     name: "BNB Chain",
     symbol: "BNB",
     rpcEndpoints: [
-      process.env.BNB_RPC_1 || "https://bsc.drpc.org",
-      process.env.BNB_RPC_2 || "https://rpc.ankr.com/bsc",
-      process.env.BNB_RPC_3 || "https://bsc-rpc.publicnode.com",
+      process.env.BNB_RPC_1 || "",
+      process.env.BNB_RPC_2 || "",
+      process.env.BNB_RPC_3 || "",
     ],
-    blockTime: 500, // kept it generaic for the historical data.can be tuned according to the network for the blokc creation time
-    blockThresholdForTheEvents: 500, // kept it generic for the so that it can adjust amon the rpc providers
+    blockTime: 250, // kept it generaic for the historical data.can be tuned according to the network for the blokc creation time
+    blockThresholdForTheEvents: 5, // kept it generic for the so that it can adjust amon the rpc providers
     targetAddresses: [
       '0x0555e30da8f98308edb960aa94c0db47230d2b9c', // WBCT
       '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // usdc
