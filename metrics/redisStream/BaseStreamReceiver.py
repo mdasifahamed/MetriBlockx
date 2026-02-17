@@ -1,4 +1,5 @@
 import json
+import asyncio
 from typing import Dict
 from redis.asyncio import Redis
 from .redisClient import get_redis
@@ -20,9 +21,17 @@ class BaseStreamReceiver:
         return await get_redis()
 
     async def receiveMessages(self):
-        redis_client = await self._getRedisClient()
         print(f"{self._chainName} Stream receiver started")
 
+        while True:
+            try:
+                redis_client = await self._getRedisClient()
+                await self._consumeLoop(redis_client)
+            except Exception as error:
+                print(f"{self._chainName} Stream error: {str(error)} — retrying in 10s")
+                await asyncio.sleep(10)
+
+    async def _consumeLoop(self, redis_client: Redis):
         while True:
             notifications = await redis_client.xreadgroup(
                 self._groupName,
