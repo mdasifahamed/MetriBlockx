@@ -76,7 +76,6 @@ export class SendEventBlockRange {
                 "MAXLEN",
                 "~",
                 "20000",
-                "NOMKSTREAM",
                 "*",
                 'data',
                 JSON.stringify(data)
