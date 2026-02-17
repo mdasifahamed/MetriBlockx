@@ -29,9 +29,9 @@ module.exports = {
 
     // Polygon Worker
     {
-      name: "worker-polygon",
+      name: "worker-ethereum",
       script: "npx",
-      args: "tsx src/index.ts --chain=polygon --block=82858373 --targetBlock=82890571",
+      args: "tsx src/index.ts --chain=ethereum --block=24422655 --targetBlock=24444137",
       instances: 1,
       autorestart: true,
       watch: false,
