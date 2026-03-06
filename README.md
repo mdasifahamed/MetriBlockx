@@ -13,7 +13,7 @@
 
 <br>
 
-<a href="https://metriblokcx-frontend-init.vercel.app/" target="_blank">
+<a href="https://www.metriblockx.com/" target="_blank">
   <img src="https://img.shields.io/badge/Live%20Dashboard-Open%20%E2%86%92-0ea5e9?style=for-the-badge" alt="Live Dashboard">
 </a>
 
@@ -27,12 +27,12 @@
 
 > Most blockchain data platforms mix CEX (centralized exchange) off-chain data with on-chain metrics. Their sources are opaque — you cannot verify whether a number came from a DEX event, a CEX API, or a price oracle. **MetriBlockx is built differently.**
 
-| | MetriBlockx | Typical Providers |
-|---|---|---|
-| Data source | **Direct RPC → chain state** | Often mixed with CEX or API data |
-| Verifiability | **Every row includes block numbers and transaction hashes** | Opaque, unauditable |
-| CEX data | **Tracked separately, clearly labeled** | Blended into on-chain metrics |
-| Pipeline | **Open and reproducible** | Closed and proprietary |
+|               | MetriBlockx                                                 | Typical Providers                |
+| ------------- | ----------------------------------------------------------- | -------------------------------- |
+| Data source   | **Direct RPC → chain state**                                | Often mixed with CEX or API data |
+| Verifiability | **Every row includes block numbers and transaction hashes** | Opaque, unauditable              |
+| CEX data      | **Tracked separately, clearly labeled**                     | Blended into on-chain metrics    |
+| Pipeline      | **Open and reproducible**                                   | Closed and proprietary           |
 
 ---
 
@@ -79,10 +79,10 @@ Ethereum and Polygon were selected because both have deep Uniswap V2/V3 liquidit
 
 ### Networks
 
-| Chain | Chain ID | Role in Validation |
-|---|---|---|
-| Ethereum | 1 | Primary — highest DEX volume and stablecoin activity |
-| Polygon | 137 | Secondary — high throughput and native token pool coverage |
+| Chain    | Chain ID | Role in Validation                                         |
+| -------- | -------- | ---------------------------------------------------------- |
+| Ethereum | 1        | Primary — highest DEX volume and stablecoin activity       |
+| Polygon  | 137      | Secondary — high throughput and native token pool coverage |
 
 ### Tokens Covered
 
@@ -96,26 +96,26 @@ Pools selected from the highest-volume Uniswap V2 and V3 pairs on both networks.
 
 **Ethereum — Uniswap:**
 
-| Pool Pair | Version | Fee Tier |
-|---|---|---|
-| USDC / WETH | V2 | — |
-| WETH / USDT | V2 | — |
-| USDC / WETH | V3 | 0.05% |
-| USDC / WETH | V3 | 0.30% |
-| WBTC / USDT | V3 | 0.30% |
-| WBTC / USDC | V3 | 0.30% |
-| WBTC / USDT | V3 | 0.05% |
-| WETH / USDT | V3 | 0.05% |
+| Pool Pair   | Version | Fee Tier |
+| ----------- | ------- | -------- |
+| USDC / WETH | V2      | —        |
+| WETH / USDT | V2      | —        |
+| USDC / WETH | V3      | 0.05%    |
+| USDC / WETH | V3      | 0.30%    |
+| WBTC / USDT | V3      | 0.30%    |
+| WBTC / USDC | V3      | 0.30%    |
+| WBTC / USDT | V3      | 0.05%    |
+| WETH / USDT | V3      | 0.05%    |
 
 **Polygon — Uniswap:**
 
-| Pool Pair | Version | Fee Tier |
-|---|---|---|
-| WETH / USDT | V3 | 0.30% |
-| USDC / WETH | V3 | — |
-| WPOL / USDC | V3 | 0.05% |
-| WPOL / USDT | V3 | 0.30% |
-| WPOL / USDC | V3 | 0.30% |
+| Pool Pair   | Version | Fee Tier |
+| ----------- | ------- | -------- |
+| WETH / USDT | V3      | 0.30%    |
+| USDC / WETH | V3      | —        |
+| WPOL / USDC | V3      | 0.05%    |
+| WPOL / USDT | V3      | 0.30%    |
+| WPOL / USDC | V3      | 0.30%    |
 
 ---
 
@@ -126,7 +126,7 @@ The datasets in [`metrics/research/test/output/`](metrics/research/test/output/)
 <br>
 <div align="center">
 
-*Can block-level on-chain data — decoded and aggregated with full transaction-level traceability — produce clean, usable analytics metrics without any external data enrichment?*
+_Can block-level on-chain data — decoded and aggregated with full transaction-level traceability — produce clean, usable analytics metrics without any external data enrichment?_
 
 </div>
 <br>
@@ -142,25 +142,25 @@ Every output dataset includes:
 
 **17 datasets generated from the validation run:**
 
-| # | Dataset | Granularity | What It Shows |
-|---|---|---|---|
-| 01 | DEX Swap Volume | Hourly | Trading volume per pool per hour, in USD |
-| 02 | DEX Swap Volume | Daily | Daily aggregation of swap volume per pool |
-| 03 | DEX Liquidity Net | Hourly | Liquidity added vs removed, net LP flow |
-| 04 | DEX Liquidity Net | Daily | Daily LP flow per pool |
-| 05 | DEX Fees | Hourly | Fee revenue collected per pool per hour |
-| 06 | DEX Fees | Daily | Daily fee revenue per pool |
-| 07 | CEX Flows | Hourly | Total CEX inflow vs outflow per exchange |
-| 08 | CEX Flows | Daily | Daily CEX flow totals |
-| 09 | Stablecoin Transfers | Hourly | USDT and USDC on-chain transfer volume |
-| 10 | Stablecoin Transfers | Daily | Daily stablecoin transfer volume |
-| 11 | Stablecoin CEX Flows | Hourly | CEX inflow/outflow broken down by stablecoin and exchange |
-| 12 | Stablecoin CEX Flows | Daily | Daily per-stablecoin CEX flows |
-| 13 | Token Supply Events | Hourly | Mint and burn events per token per hour |
-| 14 | Token Supply Events | Daily | Daily supply event totals |
-| 15 | Pool Reserves | Daily | End-of-day token balances and USD TVL per pool |
-| 16 | Master Daily Summary | Daily | All metrics consolidated — one row per chain per day |
-| 17 | Cross-Chain Comparison | Daily | Ethereum vs Polygon side-by-side across all metrics |
+| #   | Dataset                | Granularity | What It Shows                                             |
+| --- | ---------------------- | ----------- | --------------------------------------------------------- |
+| 01  | DEX Swap Volume        | Hourly      | Trading volume per pool per hour, in USD                  |
+| 02  | DEX Swap Volume        | Daily       | Daily aggregation of swap volume per pool                 |
+| 03  | DEX Liquidity Net      | Hourly      | Liquidity added vs removed, net LP flow                   |
+| 04  | DEX Liquidity Net      | Daily       | Daily LP flow per pool                                    |
+| 05  | DEX Fees               | Hourly      | Fee revenue collected per pool per hour                   |
+| 06  | DEX Fees               | Daily       | Daily fee revenue per pool                                |
+| 07  | CEX Flows              | Hourly      | Total CEX inflow vs outflow per exchange                  |
+| 08  | CEX Flows              | Daily       | Daily CEX flow totals                                     |
+| 09  | Stablecoin Transfers   | Hourly      | USDT and USDC on-chain transfer volume                    |
+| 10  | Stablecoin Transfers   | Daily       | Daily stablecoin transfer volume                          |
+| 11  | Stablecoin CEX Flows   | Hourly      | CEX inflow/outflow broken down by stablecoin and exchange |
+| 12  | Stablecoin CEX Flows   | Daily       | Daily per-stablecoin CEX flows                            |
+| 13  | Token Supply Events    | Hourly      | Mint and burn events per token per hour                   |
+| 14  | Token Supply Events    | Daily       | Daily supply event totals                                 |
+| 15  | Pool Reserves          | Daily       | End-of-day token balances and USD TVL per pool            |
+| 16  | Master Daily Summary   | Daily       | All metrics consolidated — one row per chain per day      |
+| 17  | Cross-Chain Comparison | Daily       | Ethereum vs Polygon side-by-side across all metrics       |
 
 [View all datasets →](metrics/research/test/output/)
 
@@ -170,7 +170,7 @@ Every output dataset includes:
 
 An interactive dashboard powered by data from **all blocks indexed across Feb 10–12, 2026 — Ethereum and Polygon only**. It covers hourly and daily views, pool-level breakdowns, CEX inflow/outflow by exchange, stablecoin transfer volume, and token supply events — sourced entirely from on-chain data.
 
-<a href="https://metriblokcx-frontend-init.vercel.app/" target="_blank"><strong>Open MetriBlockx Dashboard →</strong></a>
+<a href="https://www.metriblockx.com/" target="_blank"><strong>Open MetriBlockx Dashboard →</strong></a>
 
 ---
 
@@ -192,4 +192,4 @@ An interactive dashboard powered by data from **all blocks indexed across Feb 10
 
 ---
 
-*MetriBlockx — pure on-chain, always verifiable.*
+_MetriBlockx — pure on-chain, always verifiable._
